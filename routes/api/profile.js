@@ -6,7 +6,8 @@ const protect = passport.authenticate('jwt', { session: false });
 
 //Load Validation
 const validateProfileInput = require('../../validation/profile');
-const validateExperirnceInput = require('../../validation/experience');
+const validateExperienceInput = require('../../validation/experience');
+const validateEducationInput = require('../../validation/education');
 
 //Load Profile model
 const Profile = require('../../models/Profile');
@@ -145,20 +146,19 @@ router.post('/', protect, (req, res) => {
   Profile.findOne({ user: req.body.id })
     .then(profile => {
       //Update profile 
-      Profile.findOneAndUpdate({
-        user: req.user.id
-      },
-
-        {
-          $set: profileFields
+      if (profile) {
+        Profile.findOneAndUpdate({
+          user: req.user.id
         },
 
-        {
-          new: true
-        })
-        .then(profile => res.json(profile))
-      if (profile) {
+          {
+            $set: profileFields
+          },
 
+          {
+            new: true
+          })
+          .then(profile => res.json(profile))
       } else {
         //Create
 
@@ -182,12 +182,46 @@ router.post('/', protect, (req, res) => {
     .catch(err => res.status(404).json(err))
 });
 
+//@route  Post api/profile/education
+//@desc Add Education to User profile route
+//@access Private
+router.post('/education', protect, (req, res) => {
+
+  const { errors, isValid } = validateEducationInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      const newEdu = {
+        school: req.body.school,
+        degree: req.body.degree,
+        fieldofstudy: req.body.fieldofstudy,
+        from: req.body.from,
+        to: req.body.to,
+        current: req.body.current,
+        description: req.body.description
+      }
+      //Add to experience array
+      profile.education.unshift(newEdu);
+      profile.save()
+        .then(profile => res.json(profile))
+        .catch(err => res.status(400).json({ Message: 'Error saving education' }))
+    })
+});
+
 //@route  Post api/profile/experience
-//@desc Add Experience User profile route
+//@desc Add Experience to User profile route
 //@access Private
 router.post('/experience', protect, (req, res) => {
 
   const { errors, isValid } = validateExperienceInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
 
   Profile.findOne({ user: req.user.id })
     .then(profile => {
@@ -206,6 +240,62 @@ router.post('/experience', protect, (req, res) => {
         .then(profile => res.json(profile))
         .catch(err => res.status(400).json({ Message: 'Error saving work experience' }))
     })
+});
+
+//@route  Delete api/profile/experience/:exp_id
+//@desc Delete Experience in User profile route
+//@access Private
+router.delete('/experience/:exp_id', protect, (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      //Get remove index
+      const removeIndex = profile.experience
+        .map(item => item.id)
+        .indexOf(req.params.exp_id);
+
+      //Splice out of array
+      profile.experience.splice(removeIndex, 1);
+
+      //Save
+      profile.save()
+        .then(profile => res.json(profile))
+        .catch(err => res.status(404).json(err))
+    })
+    .catch(err => res.status(404).json({ Msg: 'Error getting user profile' }))
+});
+
+//@route  Delete api/profile/education/:edu_id
+//@desc Delete Education in User profile route
+//@access Private
+router.delete('/education/:edu_id', protect, (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      //Get remove index
+      const removeIndex = profile.education
+        .map(item => item.id)
+        .indexOf(req.params.edu_id);
+
+      //Splice out of array
+      profile.education.splice(removeIndex, 1);
+
+      //Save
+      profile.save()
+        .then(profile => res.json(profile))
+        .catch(err => res.status(404).json(err))
+    })
+    .catch(err => res.status(404).json({ Msg: 'Error getting user profile' }))
+});
+
+//@route  Delete api/profile
+//@desc Delete User & profile route
+//@access Private
+router.delete('/', protect, (req, res) => {
+  Profile.findOneAndRemove({ user: req.user.id })
+    .then(() => {
+      User.findOneAndRemove({ _id: req.user.id })
+        .then(() => res.json({ Success: true }))
+    })
+    .catch(err => res.status(404).json({ Msg: 'Error getting user profile' }))
 });
 
 
