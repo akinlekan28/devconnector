@@ -36,7 +36,7 @@ class CreateProfile extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentWillDidMount() {
+  componentDidMount() {
     this.props.getCurrentProfile();
   }
 

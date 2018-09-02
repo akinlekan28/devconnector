@@ -143,43 +143,29 @@ router.post('/', protect, (req, res) => {
   if (req.body.instagram)
     profileFields.social.instagram = req.body.instagram;
 
-  Profile.findOne({ user: req.body.id })
-    .then(profile => {
-      //Update profile 
-      if (profile) {
-        Profile.findOneAndUpdate({
-          user: req.user.id
-        },
+  Profile.findOne({ user: req.user.id }).then(profile => {
+    if (profile) {
+      // Update
+      Profile.findOneAndUpdate(
+        { user: req.user.id },
+        { $set: profileFields },
+        { new: true }
+      ).then(profile => res.json(profile));
+    } else {
+      // Create
 
-          {
-            $set: profileFields
-          },
+      // Check if handle exists
+      Profile.findOne({ handle: profileFields.handle }).then(profile => {
+        if (profile) {
+          errors.handle = 'That handle already exists';
+          res.status(400).json(errors);
+        }
 
-          {
-            new: true
-          })
-          .then(profile => res.json(profile))
-      } else {
-        //Create
-
-        //Check if handle exists
-        Profile.findOne({ handle: profileFields.handle })
-          .then(profile => {
-            if (profile) {
-              errors.handle = 'Handle already exist'
-              res.status(400).json(errors)
-            }
-            else {
-              //Save profile
-              new Profile(profileFields).save()
-                .then(profile => res.json(profile))
-                .catch(err => res.status(404).json(err))
-            }
-          })
-          .catch(err => res.status(404).json(err))
-      }
-    })
-    .catch(err => res.status(404).json(err))
+        // Save Profile
+        new Profile(profileFields).save().then(profile => res.json(profile));
+      });
+    }
+  });
 });
 
 //@route  Post api/profile/education
