@@ -35,6 +35,42 @@ export const addExperience = (expData, history) => dispatch => {
   }))
 }
 
+//Add Experience
+export const addEducation = (eduData, history) => dispatch => {
+  axios.post('/api/profile/education', eduData)
+    .then(res => history.push('/dashboard'))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }))
+}
+
+//Delete Experience
+export const deleteExperience = (expId) => dispatch => {
+  axios.delete(`/api/profile/experience/${expId}`)
+  .then(res => dispatch({
+    type: GET_PROFILE,
+    payload: res.data
+  }))
+  .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }))
+}
+
+//Delete Education
+export const deleteEducation = (eduId) => dispatch => {
+  axios.delete(`/api/profile/education/${eduId}`)
+    .then(res => dispatch({
+      type: GET_PROFILE,
+      payload: res.data
+    }))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }))
+}
+
 //Delete Account & Profile
 export const deleteAccount = () => dispatch => {
   if (window.confirm('Are you sure? This can Not be undone'))
