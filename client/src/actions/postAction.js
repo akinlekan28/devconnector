@@ -15,7 +15,6 @@ export const addPost = postData => dispatch => {
 }
 
 //Get posts
-
 export const getPosts = () => dispatch => {
   dispatch(setPostLoading());
   axios.get('/api/posts')
@@ -27,6 +26,39 @@ export const getPosts = () => dispatch => {
       type: GET_POSTS,
       payload: null
     }))
+}
+
+//Delete Posts
+export const deletePost = id => dispatch => {
+  axios.delete(`/api/posts/${id}`)
+    .then(res => dispatch({
+      type: DELETE_POST,
+      payload: id
+    }))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }));
+}
+
+//Add like
+export const addLike = id => dispatch => {
+  axios.post(`/api/posts/like/${id}`)
+    .then(res => dispatch(getPosts()))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }));
+}
+
+//Remove like
+export const deleteLike = id => dispatch => {
+  axios.post(`/api/posts/unlike/${id}`)
+    .then(res => dispatch(getPosts()))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }));
 }
 
 //Set loding state

@@ -20,7 +20,7 @@ class Post extends Component {
     if (posts == null || loading) {
       postContent = <Spinner />
     } else {
-      postContent = <PostFeed post={posts} />
+      postContent = <PostFeed posts={posts} />
     }
 
     return (
