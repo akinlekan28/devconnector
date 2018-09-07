@@ -23,11 +23,11 @@ class ProfileGithub extends Component {
 
     fetch(`https://api.github.com/users/${username}/repos?per_page=${count}&sort=${sort}&client_id=${clientId}&client_secret=${clientSecret}`)
       .then(res => res.json())
-      .then(data => { 
-        if(data.message === "Not Found"){
+      .then(data => {
+        if (data.message === "Not Found") {
           this.setState({ repos: [] });
         } else {
-            this.setState({ repos: data });
+          this.setState({ repos: data });
         }
       })
       .catch(err => console.log(err));
@@ -68,7 +68,7 @@ class ProfileGithub extends Component {
       <div>
         <hr />
         <h3 className="mb-4">Latest Github Repos</h3>
-        {(!isEmpty(repoItems)) ? repoItems: (<span>Github Username not found</span>)}
+        {(!isEmpty(repoItems)) ? repoItems : (<span>Error Fetching Github info</span>)}
       </div>
     )
   }
