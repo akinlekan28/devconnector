@@ -174,7 +174,7 @@ router.post('/forgotpassword', (req, res) => {
                    <body>
                       <div>
                           <h3>Dear ${user.name},</h3>
-                          <p>You requested for a password reset on devconnector, kindly use this <a href="https://localhost:3000/resetpassword/${user.token}">link</a> to reset your password</p>
+                          <p>You requested for a password reset on devconnector, kindly use this <a href="https://${req.headers.host}/resetpassword/${user.token}">link</a> to reset your password</p>
                           <br>
                           <p>Cheers!</p>
                       </div>
