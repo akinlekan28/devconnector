@@ -11,6 +11,7 @@ const mailer = require('sendgrid').mail;
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
 const validateResetInput = require('../../validation/reset');
+const validateNewInput = require('../../validation/newpassword')
 
 //Load User Model
 const User = require('../../models/User');
@@ -173,7 +174,7 @@ router.post('/forgotpassword', (req, res) => {
                    <body>
                       <div>
                           <h3>Dear ${user.name},</h3>
-                          <p>You requested for a password reset on devconnector, kindly use this <a href="/resetpassword?token=${user.token}">link</a> to reset your password</p>
+                          <p>You requested for a password reset on devconnector, kindly use this <a href="https://localhost:3000/resetpassword/${user.token}">link</a> to reset your password</p>
                           <br>
                           <p>Cheers!</p>
                       </div>
@@ -191,7 +192,7 @@ router.post('/forgotpassword', (req, res) => {
 
               sender.API(request, (error, response) => {
                 if (error) {
-                  return res.status(400).json(error)
+                  return res.status(400).json({ error: 'Error sending password reset link' })
                 }
 
                 return res.status(200).json({ success: 'Password link sent successfully!' });
@@ -205,6 +206,43 @@ router.post('/forgotpassword', (req, res) => {
     })
     .catch(err => console.log(err));
 
+});
+
+//@route  Post api/users/forgotpassword
+//@desc Reset user password
+//@access Public
+
+router.post('/resetpassword/:token', (req, res) => {
+  User.findOne({ token: req.params.token })
+    .then(user => {
+      if (!user.token) {
+        return res.status(404).json({ error: 'Password reset token not found or invalid!' })
+      } else if (user.expiry < Date.now()) {
+        return res.status(422).json({ error: 'Password reset token expired!' })
+      }
+      if (req.params.token === user.token) {
+        const { errors, isValid } = validateNewInput(req.body);
+
+        if (!isValid) {
+          return res.status(400).json(errors);
+        }
+
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(req.body.password, salt, (err, hash) => {
+            if (err) throw err;
+            req.body.password = hash;
+            User.findOneAndUpdate({ email: user.email }, { password: req.body.password }, { name: user.name })
+              .then(user => {
+                res.status(200).json({ user, success: 'Password successfully changed!' })
+              })
+              .catch(err => console.log(err))
+          })
+        })
+      } else {
+        return res.status(400).json({ error: 'Password reset token does not match' })
+      }
+    })
+    .catch(err => console.log(err))
 });
 
 module.exports = router;
