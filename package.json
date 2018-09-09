@@ -31,6 +31,7 @@
     "mongoose": "^5.2.9",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
+    "sendgrid": "^5.2.3",
     "validator": "^10.7.0"
   }
 }

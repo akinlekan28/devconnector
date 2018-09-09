@@ -22,6 +22,14 @@ const UserSchema = new Schema({
     default: Date.now()
   },
 
+  token: {
+    type: String
+  },
+
+  expiry: {
+    type: Date
+  }
+
 });
 
 module.exports = User = mongoose.model('users', UserSchema);
