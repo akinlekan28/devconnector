@@ -192,7 +192,8 @@ router.post('/forgotpassword', (req, res) => {
 
               sender.API(request, (error, response) => {
                 if (error) {
-                  return res.status(400).json({ error: 'Error sending password reset link' })
+                  errors.email = 'Error sending password reset link'
+                  return res.status(400).json(errors)
                 }
 
                 return res.status(200).json({ success: 'Password link sent successfully!' });

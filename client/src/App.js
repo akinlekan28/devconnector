@@ -25,6 +25,7 @@ import Profiles from './components/profiles/Profiles';
 import Profile from './components/profile/Profile';
 import Post from './components/posts/Post';
 import SinglePost from './components/post/Post';
+import Forgot from './components/auth/Forgot';
 
 //check for token
 if (localStorage.jwtToken) {
@@ -83,6 +84,7 @@ class App extends Component {
                 <PrivateRoute exact path="/post/:id" component={SinglePost} />
               </Switch>
               <Route exact path="/not-found" component={NotFound} />
+              <Route exact path="/forgot-password" component={Forgot} />
             </div>
             <Footer />
           </div>

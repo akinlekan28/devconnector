@@ -1,7 +1,7 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import { GET_ERRORS, SET_CURRENT_USER } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, GET_SUCCESS, CLEAR_ERRORS } from './types';
 
 //Register User
 export const registerUser = (userData, history) => dispatch => {
@@ -50,4 +50,26 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false);
   //set current user to {} which also sets isAuthenticated to false
   dispatch(setCurrentUser({}));
+}
+
+export const sendResetLink = email => dispatch => {
+
+  dispatch(clearErrors());
+
+  axios.post('/api/users/forgotpassword', email)
+    .then(res => dispatch({
+      type: GET_SUCCESS,
+      payload: res.data
+    }))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }));
+}
+
+//Clear Error
+export const clearErrors = () => {
+  return {
+    type: CLEAR_ERRORS
+  }
 }

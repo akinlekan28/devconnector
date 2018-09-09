@@ -2,6 +2,12 @@ img {
   width: 100%;
 }
 
+.nond {}
+
+.nond:hover {
+  text-decoration: none;
+}
+
 .landing {
   position: relative;
   background: url('./img/showcase.jpg') no-repeat;
