@@ -26,6 +26,7 @@ import Profile from './components/profile/Profile';
 import Post from './components/posts/Post';
 import SinglePost from './components/post/Post';
 import Forgot from './components/auth/Forgot';
+import Reset from './components/auth/Reset';
 
 //check for token
 if (localStorage.jwtToken) {
@@ -85,6 +86,7 @@ class App extends Component {
               </Switch>
               <Route exact path="/not-found" component={NotFound} />
               <Route exact path="/forgot-password" component={Forgot} />
+              <Route exact path="/resetpassword/:token" component={Reset} />
             </div>
             <Footer />
           </div>

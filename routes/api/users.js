@@ -214,19 +214,25 @@ router.post('/forgotpassword', (req, res) => {
 //@access Public
 
 router.post('/resetpassword/:token', (req, res) => {
+
+  const { errors, isValid } = validateNewInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   User.findOne({ token: req.params.token })
     .then(user => {
       if (!user.token) {
-        return res.status(404).json({ error: 'Password reset token not found or invalid!' })
-      } else if (user.expiry < Date.now()) {
-        return res.status(422).json({ error: 'Password reset token expired!' })
+        errors.email = 'Password reset token not found or invalid!';
+        return res.status(404).json(errors)
+      }
+
+      else if (user.expiry < Date.now()) {
+        errors.email = 'Password reset token expired!';
+        return res.status(422).json(errors)
       }
       if (req.params.token === user.token) {
-        const { errors, isValid } = validateNewInput(req.body);
-
-        if (!isValid) {
-          return res.status(400).json(errors);
-        }
 
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(req.body.password, salt, (err, hash) => {
@@ -240,7 +246,8 @@ router.post('/resetpassword/:token', (req, res) => {
           })
         })
       } else {
-        return res.status(400).json({ error: 'Password reset token does not match' })
+        errors.email = 'Password reset token does not match';
+        return res.status(400).json(errors)
       }
     })
     .catch(err => console.log(err))

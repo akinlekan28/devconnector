@@ -52,6 +52,7 @@ export const logoutUser = () => dispatch => {
   dispatch(setCurrentUser({}));
 }
 
+//send user password reset link
 export const sendResetLink = email => dispatch => {
 
   dispatch(clearErrors());
@@ -65,6 +66,22 @@ export const sendResetLink = email => dispatch => {
       type: GET_ERRORS,
       payload: err.response.data
     }));
+}
+
+//reset user password
+export const resetPassword = (token, userPass) => dispatch => {
+
+  dispatch(clearErrors());
+
+  axios.post(`/api/users/resetpassword/${token}`, userPass)
+    .then(res => dispatch({
+      type: GET_SUCCESS,
+      payload: res.data
+    }))
+    .catch(err => dispatch({
+      type: GET_ERRORS,
+      payload: err.response.data
+    }))
 }
 
 //Clear Error
