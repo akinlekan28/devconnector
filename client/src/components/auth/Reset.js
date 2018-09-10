@@ -89,7 +89,6 @@ class Reset extends Component {
 Reset.propTypes = {
   resetPassword: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  success: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({

@@ -77,7 +77,6 @@ class Forgot extends Component {
 Forgot.propTypes = {
   sendResetLink: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  success: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
