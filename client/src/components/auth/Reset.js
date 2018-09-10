@@ -54,7 +54,7 @@ class Reset extends Component {
         <div className="row">
           <div className="col-md-8 m-auto">
             <h1 className="text-center mb-4">Reset Password</h1>
-            <p className="lead text-center">Enter your email to receive password reset link</p>
+            <p className="lead text-center">Enter new password</p>
             <form onSubmit={this.onSubmit}>
 
               <TextFieldGroup
