@@ -8,6 +8,10 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
+  dp: {
+    data: Buffer,
+    type: String
+  },
   handle: {
     type: String,
     required: true,
@@ -89,7 +93,7 @@ const ProfileSchema = new Schema({
     current: {
       type: Boolean,
       default: false
-    }, 
+    },
   }],
 
   social: {

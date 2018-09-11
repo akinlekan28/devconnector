@@ -1,45 +1,49 @@
-
-const STATIC_CACHE_NAME = "devconnector-v3";
-const STATIC_URLS = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/static/css/main.css",
-  "/static/js/main.js",
-  "/logo.png",
-  "/bootstrap.min.css",
-  "/bootstrap.min.js",
-  "/all.min.css",
-  "/all.min.js",
-  "/jquery-3.3.1.min.js",
-  "/popper.min.js"
+var cacheName = 'sw-version-3'; // the cache version
+var filesToCache = [
+  '/',
+  '/style/main.css',
+  '/index.html',
+  '/all.min.css',
+  '/all.min.js',
+  '/bootstrap.min.css',
+  '/bootstrap.min.js',
+  '/jquery-3.3.1.min.js',
+  '/logo.png',
+  '/manifest.json',
+  '/popper.min.js'
+  // files you need to cache (can be anything), never cache the SW itself,
 ];
 
-const STATIC_URLS = BASE_STATIC_URLS.concat(JSON.parse('%MANIFESTURLS%'));
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE_NAME).then(cache => {
-      return cache.addAll(STATIC_URLS);
-    }).then(() => self.skipWaiting())
+self.addEventListener('install', function (e) {
+  console.log('[ServiceWorker] Install');
+  e.waitUntil(
+    caches.open(cacheName).then(function (cache) {
+      console.log('[ServiceWorker] Caching app shell');
+      return cache.addAll(filesToCache);
+    })
   );
 });
 
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+self.addEventListener('activate', function (e) {
+  console.log('[ServiceWorker] Activate');
+  e.waitUntil(
+    caches.keys().then(function (keyList) {
+      return Promise.all(keyList.map(function (key) {
+        if (key !== cacheName) {
+          console.log('[ServiceWorker] Removing old cache', key);
+          return caches.delete(key);
+        }
+      }));
+    })
   );
+  return self.clients.claim();
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name.includes("devconnector") && name !== STATIC_CACHE_NAME)
-          .map(name => caches.delete(name))
-      )
-    }).then(() => self.clients.claim())
+self.addEventListener('fetch', function (e) {
+  console.log('[ServiceWorker] Fetch', e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function (response) {
+      return response || fetch(e.request);
+    })
   );
 });

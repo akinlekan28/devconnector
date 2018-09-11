@@ -15,14 +15,6 @@ const Profile = require('../../models/Profile');
 //Load User model
 const User = require('../../models/User')
 
-
-//@route  Get api/profile/test
-//@desc Tests profile route
-//@access Public
-router.get('/test', (req, res) => {
-  res.json({ msg: "Profile works" })
-});
-
 //@route  Get api/profile
 //@desc Current User profile route
 //@access Private
@@ -110,8 +102,11 @@ router.post('/', protect, (req, res) => {
   const profileFields = {};
 
   profileFields.user = req.user.id;
-  if (req.body.handle)
-    profileFields.handle = req.body.handle;
+
+  if (req.body.dp)
+
+    if (req.body.handle)
+      profileFields.handle = req.body.handle;
   if (req.body.company)
     profileFields.company = req.body.company;
   if (req.body.website)
