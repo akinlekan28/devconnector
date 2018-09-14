@@ -1,16 +1,10 @@
-var cacheName = 'sw-version-3'; // the cache version
+var cacheName = 'sw-version-4'; // the cache version
 var filesToCache = [
   '/',
   '/style/main.css',
   '/index.html',
-  '/all.min.css',
-  '/all.min.js',
-  '/bootstrap.min.css',
-  '/bootstrap.min.js',
-  '/jquery-3.3.1.min.js',
   '/logo.png',
-  '/manifest.json',
-  '/popper.min.js'
+  '/manifest.json'
   // files you need to cache (can be anything), never cache the SW itself,
 ];
 
